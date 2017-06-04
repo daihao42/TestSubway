@@ -15,7 +15,7 @@ class ODData():
         schema = StructType(fileds)
 
         # Load a text file and convert each line to a Row.
-        lines = sc.textFile("test")
+        lines = sc.textFile("res")
         parts = lines.map(lambda l: l.split(","))
         paths = parts.map(lambda p: (p[0],p[1],p[2],p[3],p[4],int(p[5])))
         # Infer the schema, and register the DataFrame as a table.
