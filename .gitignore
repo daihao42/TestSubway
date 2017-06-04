@@ -2,3 +2,5 @@
 res
 test
 *.pyc
+metastore_db
+derby.log
