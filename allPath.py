@@ -10,7 +10,7 @@ __author__ = 'dai'
 
 class AllPath():
     def __init__(self,sc,spark):
-        schemaString = 'start end time path'
+        schemaString = 'apstart apend aptime appath'
         fileds = [StructField(field_name,StringType(),True) for field_name in schemaString.split()]
         schema = StructType(fileds)
 

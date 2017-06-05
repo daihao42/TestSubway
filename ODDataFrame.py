@@ -10,14 +10,14 @@ __author__ = 'dai'
 
 class ODData():
     def __init__(self,sc,spark):
-        schemaString = 'cardid starttime start endtime end time'
+        schemaString = 'cardid odstarttime odstart odendtime odend odtime'
         fileds = [StructField(field_name,StringType(),True) for field_name in schemaString.split()]
         schema = StructType(fileds)
 
         # Load a text file and convert each line to a Row.
         lines = sc.textFile("res")
         parts = lines.map(lambda l: l.split(","))
-        paths = parts.map(lambda p: (p[0],p[1],p[2],p[3],p[4],int(p[5])))
+        paths = parts.map(lambda p: (p[0],p[1][-8:],p[2],p[3][-8:],p[4],int(p[5])))
         # Infer the schema, and register the DataFrame as a table.
         self.schemaPaths = spark.createDataFrame(paths, schema)
         self.schemaPaths.createOrReplaceTempView("ods")

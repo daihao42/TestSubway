@@ -3,20 +3,20 @@
 from pyspark.sql.types import *
 
 '''
-    save SubwayFlow as cardID,start,starttime,end,endtime
-    abord!! use left join instead
+    save SubwayFlow as cardID,start,starttime,end,endtime,od
+    use right join instead insert
 '''
 __author__ = 'dai'
 
-class ODData():
+class SubwayFlow():
     def __init__(self,sc,spark):
-        schemaString = 'cardid starttime start endtime end time'
+        schemaString = 'cardid time od'
         fileds = [StructField(field_name,StringType(),True) for field_name in schemaString.split()]
         schema = StructType(fileds)
 
         # Load a text file and convert each line to a Row.
         # Infer the schema, and register the DataFrame as a table.
-        self.schemaPaths = spark.createDataFrame(None, schema)
+        self.schemaPaths = spark.createDataFrame([], schema)
         self.schemaPaths.createOrReplaceTempView("subwayflow")
 
     def getSql(self):
