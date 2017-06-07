@@ -25,15 +25,15 @@ class FlatPathTime():
         path = path[7:]
         L = []
         # mark endtime and if endtime != starttime means a trans happened
-        lnext = path[3]
+        lnext = path[2]
         for i in range(0,len(path),4):
             res = ''
-            trans = 0
             # trans passenger
             # starttime != pre endtime
             if not(lnext == path[i+2]):
-                trans = 1
-            res = path[i+2]+','+path[i]+','+path[i+1]+',1'+','+str(trans)
+                res = path[i+2]+','+path[i]+','+path[i+1]+',1,1'
+            else:
+                res = path[i+2]+','+path[i]+','+path[i+1]+',1,0'
             L.append(res)
             lnext = path[i+3]
         return L
