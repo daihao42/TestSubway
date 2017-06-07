@@ -9,13 +9,13 @@ from pyspark.sql.types import *
 __author__ = 'dai'
 
 class ODData():
-    def __init__(self,sc,spark):
+    def __init__(self,spark,data):
         schemaString = 'cardid odstarttime odstart odendtime odend odtime'
         fileds = [StructField(field_name,StringType(),True) for field_name in schemaString.split()]
         schema = StructType(fileds)
 
         # Load a text file and convert each line to a Row.
-        lines = sc.textFile("res")
+        lines = data
         parts = lines.map(lambda l: l.split(","))
         paths = parts.map(lambda p: (p[0],p[1][-8:],p[2],p[3][-8:],p[4],int(p[5])))
         # Infer the schema, and register the DataFrame as a table.

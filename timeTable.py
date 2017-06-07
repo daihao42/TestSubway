@@ -60,6 +60,9 @@ class TimeTableDict():
 
 
     def getEndTime(self,start,end,starttime):
+        if start == end:
+            return starttime,starttime
+
         dic = self.stations[start+end]
         try:
             endtime = dic['time'][starttime]
@@ -67,6 +70,7 @@ class TimeTableDict():
             starttime = self.dividSearch(starttime,dic['index'])
             endtime = dic['time'][starttime]
         return starttime,endtime
+
 
     def dividSearch(self,time,index):
         L = index
