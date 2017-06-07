@@ -25,7 +25,7 @@ class FlatPathTime():
         path = path[7:]
         L = []
         # mark endtime and if endtime != starttime means a trans happened
-        lnext = path[2]
+        lnext = path[3]
         for i in range(0,len(path),4):
             res = ''
             trans = 0
