@@ -59,7 +59,7 @@ class FlatPathTime():
     def chooseCloser(self,data):
         if len(data) == 1:
             return data[0]
-        minstr = data[0]
+        #minstr = data[0]
         mins = 99999
         for i in data:
             L = i.split(',')

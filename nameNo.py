@@ -16,11 +16,3 @@ class NameNo():
     def Name2No(self,name):
         return self.nameno[name]
 
-
-def test(sc):
-    data = sc.textFile('SubwayFlowConf/nameno.csv')
-    nn = NameNo(data)
-    data = sc.textFile('input/20160130')
-    data = data.take(1)[0].split(',')[6]
-    return nn,data
-    #print nn.Name2No(data)

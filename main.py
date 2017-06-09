@@ -18,7 +18,7 @@ master = "spark://192.168.40.97:7077"
 ## Main functionality
 
 def main(sc,spark):
-	data = sc.textFile("./input/"+sys.argv[1])
+	data = sc.textFile("./subway/"+sys.argv[1])
 	NameNo = nameNo.NameNo(sc)
 	odfilter = odFilter.ODFilter(NameNo)
 	data = odfilter.getOD(data)
@@ -47,7 +47,16 @@ def main(sc,spark):
         flatpathtime = fpt.getAllSection(pathtime)
         res = reduceFlow.ReduceFlow().getReduceFlow(flatpathtime)
         #pathtime.saveAsTextFile('pathtime')
-        res.saveAsTextFile(sys.argv[1]+'_sectionFlow')
+        #res.saveAsTextFile(sys.argv[1]+'_sectionFlow')
+        saveAsCsv(res.collect())
+
+
+
+def saveAsCsv(data):
+    L = map(lambda x:x.split(','),data)
+    df = pandas.DataFrame(L)
+    df.to_csv('../sectionFlow/'+sys.argv[1]+'_s',header = None,index = None)
+
 
 
 

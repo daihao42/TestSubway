@@ -17,9 +17,6 @@ class TryPath():
             res.append(endtime)
             starttime = endtime
         ress = ','.join(res)
-        #ress = res[0]
-        #for i in res[1:]:
-        #    ress = ress+','+i
         return ress
 
     def addWalkTime(self,station,s):
