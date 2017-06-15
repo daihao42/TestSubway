@@ -1,6 +1,7 @@
 # sc is an existing SparkContext.
 #from pyspark.sql import SQLContext, Row
 from pyspark.sql.types import *
+import datetime
 
 '''
     translate AllPath file to spark-sql dataframe
@@ -42,8 +43,9 @@ class TimeTable():
 	  #print teenName
 
 class TimeTableDict():
-    def __init__(self,wp):
+    def __init__(self,wp,trans):
         self.stations = {}
+        self.transIn = trans
         for i in range(len(wp)):
             L = wp.iloc[i]
             try:
@@ -59,7 +61,7 @@ class TimeTableDict():
                 dic['time'] = {L['starttime']:L['endtime']}
 
 
-    def getEndTime(self,start,end,starttime):
+    def getEndTime(self,start,end,starttime,isstart):
         if start == end:
             return starttime,starttime
 
@@ -67,6 +69,9 @@ class TimeTableDict():
         try:
             endtime = dic['time'][starttime]
         except:
+            ## add transTime
+            if not(isstart):
+                starttime = self.addTransTime(start,starttime)
             starttime = self.dividSearch(starttime,dic['index'])
             endtime = dic['time'][starttime]
         return starttime,endtime
@@ -84,4 +89,11 @@ class TimeTableDict():
                 L = L[:i+1]
             i = len(L)/2
         return L[i]
+
+    def addTransTime(self,station,s):
+        fmt = "%H:%M:%S"
+        dd = datetime.datetime.strptime(s,fmt)
+        wl = datetime.timedelta(seconds = self.transIn[station])
+        return datetime.datetime.strftime(dd+wl,fmt)
+
 

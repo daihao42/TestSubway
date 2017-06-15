@@ -4,10 +4,15 @@
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SparkSession
 import sys,datetime,pandas
-import odFilter,nameNo
-import ODDataFrame
+import odFilter
+import ODDataFrame,stationInOut,lineFlow
 import allPath,timeTable,tryPath,flatPathTime,reduceFlow
 
+'''
+
+    output:starttime,sectionstatr,sectionend,laststation,flow,transflow
+
+'''
 ## Module Constants
 APP_NAME = "Subway_Flow"
 
@@ -19,10 +24,19 @@ master = "spark://192.168.40.97:7077"
 
 def main(sc,spark):
 	data = sc.textFile("./subway/"+sys.argv[1])
-	NameNo = nameNo.NameNo(sc)
-	odfilter = odFilter.ODFilter(NameNo)
+        try:
+            span = sys.argv[2]
+        except:
+            span = 15
+            '''
+##### get stationin stationout #########
+        stationinout = stationInOut.StationInOut(span)
+        stationin = stationinout.runner(data,sys.argv[1])
+
+###### get flow and trans ############
+	odfilter = odFilter.ODFilter()
 	data = odfilter.getOD(data)
-	#data.saveAsTextFile('res')
+	#data.saveAsTextFile('ods/'+sys.argv[1])
         odd = ODDataFrame.ODData(spark,data)
         od = odd.getSql()
         app = allPath.AllPath(sc,spark)
@@ -38,27 +52,42 @@ def main(sc,spark):
             wp = week.toPandas()
         else :
             wp = work.toPandas()
-        tts = timeTable.TimeTableDict(wp)
         walk = sc.textFile('SubwayFlowConf/walkIn')
         walkIn = getWalkIn(walk)
+	trans = sc.textFile('SubwayFlowConf/minTrans')
+	transIn = getTranIn(trans)
+        tts = timeTable.TimeTableDict(wp,transIn)
         tp = tryPath.TryPath(tts,walkIn)
         pathtime = tp.getAllPath(odpath)
         fpt = flatPathTime.FlatPathTime(walkIn)
-        flatpathtime = fpt.getAllSection(pathtime)
+        choosepath,flatpathtime = fpt.getAllSection(pathtime)
+        '''
+        choosepath = sc.textFile('choosePath/'+sys.argv[1])
+#### line flow ##############
+        sec2line = pd.read_csv('Subway/FlowConf/sec2line.csv',header=None)
+        lf = lineFlow.LineFlow(sec2line,span)
+        lf.runner(choosepath,sys.argv[1])
+
+        #choosepath.saveAsTextFile('choosePath/'+sys.argv[1])
         res = reduceFlow.ReduceFlow().getReduceFlow(flatpathtime)
         #pathtime.saveAsTextFile('pathtime')
         #res.saveAsTextFile(sys.argv[1]+'_sectionFlow')
-        saveAsCsv(res.collect())
-
+        sectionflow = saveAsCsv(res.collect())
+        
 
 
 def saveAsCsv(data):
     L = map(lambda x:x.split(','),data)
     df = pandas.DataFrame(L)
-    df.to_csv('../sectionFlow/'+sys.argv[1]+'_s',header = None,index = None)
+    df.to_csv('result/sectionFlow/'+sys.argv[1]+'_s',header = None,index = None)
+    return df
 
-
-
+def getTranIn(data):
+    transIn = {}
+    for i in data.collect():
+        L = i.split(',')
+        transIn[L[0]] = int(float(L[1]))
+    return transIn
 
 def getWalkIn(data):
     walkIn = {}
@@ -79,6 +108,14 @@ def cleanSql(rs):
         res = res+','+str(i)
     return res
     
+    def timeIndex(self,x):
+        L = x.split(':')
+        return str(((int(L[0])*60) + int(L[1]))/self.span)
+
+    def resetIndex(self,x):
+        return '%02d:%02d'%((x*self.span)/60,(x*self.span)%60)
+
+
 
 if __name__ == '__main__':
 # Configure Spark

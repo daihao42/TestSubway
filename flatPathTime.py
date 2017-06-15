@@ -16,26 +16,34 @@ class FlatPathTime():
         wl = datetime.timedelta(seconds = self.walkIn[station])
         return datetime.datetime.strftime(dd+wl,fmt)
 
-    def flatsplit(self,x):
+### get choose path to detection result 
+    def getPath(self,x):
         if len(x[1].data) >1:
             path = self.filterPath(x[1].data)
         else :
             path = x[1].data[0]
+        return path
+
+
+    def flatsplit(self,path):
         path = path.split(',')
         path = path[7:]
         L = []
         # mark endtime and if endtime != starttime means a trans happened
         lnext = path[2]
+# last arriveStation ,save to judge pos
+        lastStation = path[0]
         for i in range(0,len(path),4):
             res = ''
             # trans passenger
             # starttime != pre endtime
             if not(lnext == path[i+2]):
-                res = path[i+2]+','+path[i]+','+path[i+1]+',1,1'
+                res = path[i+2]+','+path[i]+','+path[i+1]+','+lastStation+',1,1'
             else:
-                res = path[i+2]+','+path[i]+','+path[i+1]+',1,0'
+                res = path[i+2]+','+path[i]+','+path[i+1]+','+lastStation+',1,0'
             L.append(res)
             lnext = path[i+3]
+            lastStation = path[i]
         return L
 
     def filterPath(self,data):
@@ -76,7 +84,8 @@ class FlatPathTime():
     def getAllSection(self,data):
         data = data.map(self.groupSplit)
         data = data.groupByKey()
-        data = data.flatMap(self.flatsplit)
-        return data
+        data = data.map(self.getPath)
+        paths = data.flatMap(self.flatsplit)
+        return data,paths
         
 

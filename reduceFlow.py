@@ -1,7 +1,7 @@
 class ReduceFlow():
     def ssplit(self,x):
         L = x.split(',')
-        return (','.join(L[:3]),','.join(L[3:5]))
+        return (','.join(L[:4]),','.join(L[4:6]))
 
     def ssreduce(self,x,y):
         L1 = x.split(',')

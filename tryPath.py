@@ -9,8 +9,10 @@ class TryPath():
         L = x.split(',')
         starttime = self.addWalkTime(L[1],L[2])
         res = L[:7]
+        isstart = True
         for i in range(7,len(L) - 1):
-            starttime,endtime = self.tts.getEndTime(L[i],L[i+1],starttime)
+            starttime,endtime = self.tts.getEndTime(L[i],L[i+1],starttime,isstart)
+            isstart = False
             res.append(L[i])
             res.append(L[i+1])
             res.append(starttime)
