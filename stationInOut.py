@@ -1,5 +1,3 @@
-import sys
-import pandas as pd
 '''
     use / to getIndex
 
@@ -20,7 +18,7 @@ class StationInOut():
         L = x.split(',')
         return (self.timeIndex(L[1][11:-3])+','+L[2]+','+L[3],x)
 
-    def runner(self,data,sdate):
+    def runner(self,data):
         data1 = data.map(self.ssplit)
         data1 = data1.countByKey()
         res = []
@@ -29,11 +27,6 @@ class StationInOut():
             L[0] = self.resetIndex(int(L[0]))
             L.append(v)
             res.append(L)
-        df = pd.DataFrame(res)
-        self.stationin = df[df[2] == '21']
-
-        df[df[2] == '21'].to_csv('result/stationin/'+sdate,index = None,header = None)
-        df[df[2] == '22'].to_csv('result/stationout/'+sdate,index = None,header = None)
-        df[df[2] == '01'].to_csv('result/stationsale/'+sdate,index = None,header = None)
+        return res
 
 

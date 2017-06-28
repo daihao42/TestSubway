@@ -2,6 +2,7 @@
 res
 test
 *.pyc
+result
 metastore_db
 derby.log
 ODDataFrame.py

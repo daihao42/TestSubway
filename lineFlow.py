@@ -1,5 +1,3 @@
-import pandas as pd
-
 class LineFlow():
     def __init__(self,se,span):
         dic = {}
@@ -23,9 +21,10 @@ class LineFlow():
             if not(lastLine == line):
                 res = (self.timeIndex(path[i+2][:-3])+','+line,'1')
                 L.append(res)
+                lastLine = line
         return L
 
-    def runner(self,data,sdate):
+    def runner(self,data):
         data = data.flatMap(self.flatsplit)
         data = data.countByKey()
         res = []
@@ -34,14 +33,14 @@ class LineFlow():
             L[0] = self.resetIndex(L[0])
             L.append(str(v))
             res.append(','.join(L))
-        df = pd.DataFrame(res)
-        df.to_csv('result/lineflow/'+sdate,header=None)
+        return res
 
     def timeIndex(self,x):
         L = x.split(':')
         return str(((int(L[0])*60) + int(L[1]))/self.span)
 
     def resetIndex(self,x):
+        x = int(x)
         return '%02d:%02d'%((x*self.span)/60,(x*self.span)%60)
 
 
