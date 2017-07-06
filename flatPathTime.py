@@ -30,6 +30,7 @@ class FlatPathTime():
         path = path[7:]
         L = []
         # mark endtime and if endtime != starttime means a trans happened
+## first time lnext should equals starttime otherwise the first path will be consider as trans.
         lnext = path[2]
 # last arriveStation ,save to judge pos
         lastStation = path[0]

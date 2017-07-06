@@ -10,7 +10,7 @@ import allPath,timeTable,tryPath,flatPathTime,reduceFlow
 
 '''
 
-    output:starttime,sectionstatr,sectionend,laststation,flow,transflow
+    output:starttime,sectionstart,sectionend,laststation,flow,transflow
 
 '''
 ## Module Constants
