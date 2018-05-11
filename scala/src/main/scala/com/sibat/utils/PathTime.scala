@@ -65,9 +65,13 @@ object PathTime{
       }
 
       var min = Int.MaxValue
+      var temp = Int.MaxValue
       var minList = List[String]()
       for (arr <- arrs){
-        if(min > timediff(arr(4),arr(arr.size - 1))) minList = arr
+        temp = timediff(arr(4),arr(arr.size - 1))
+        if(min > temp){
+            minList = arr
+            min = temp
       }
       minList
     }
